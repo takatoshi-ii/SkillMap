@@ -1,0 +1,391 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI開発プロジェクト実績マップ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap');
+        body { font-family: 'Noto Sans JP', sans-serif; overflow: hidden; }
+        .node rect { cursor: pointer; stroke-width: 2px; transition: fill 0.3s, stroke 0.3s; }
+        .node text { font-size: 14px; pointer-events: none; }
+        .node .expand-symbol { font-size: 16px; text-anchor: middle; cursor: pointer; }
+        .link { fill: none; stroke: #cbd5e1; stroke-width: 2px; }
+        .tooltip { position: absolute; text-align: center; padding: 8px 12px; font-size: 12px; background: #1f2937; color: #f9fafb; border-radius: 8px; pointer-events: none; opacity: 0; transition: opacity 0.3s; z-index: 10; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+    <div id="mindmap-container" class="w-full h-screen"></div>
+    <div class="tooltip"></div>
+    <div class="absolute top-0 left-0 p-4 bg-white/70 backdrop-blur-sm rounded-br-xl shadow-lg">
+        <h1 id="main-title" class="text-xl font-bold text-slate-900"></h1>
+        <p class="text-sm text-slate-600">ノードをクリックして展開/折りたたみ。ドラッグで移動、ホイールでズーム。</p>
+        <div class="mt-3">
+            <!--<button id="expand-all" class="px-3 py-1 bg-sky-500 text-white rounded-md text-sm hover:bg-sky-600 transition-colors shadow">すべて展開</button> -->
+            <button id="collapse-all" class="px-3 py-1 bg-slate-500 text-white rounded-md text-sm hover:bg-slate-600 transition-colors ml-2 shadow">すべて閉じる</button>
+        </div>
+    </div>
+    <script>
+        const mindmapData = {
+  "name": "AI開発プロジェクト実績マップ",
+  "children": [
+    {
+      "name": "物体検知・画像分類",
+      "children": [
+        {
+          "name": "❶スマホ向け人物カウントアプリ",
+          "children": [
+            {
+              "name": "人物検知"
+            },
+            {
+              "name": "TensorFlow Lite量子化"
+            },
+            {
+              "name": "MQTTリアルタイム連携"
+            }
+          ]
+        },
+        {
+          "name": "❷電線コネクタの異常検知",
+          "children": [
+            {
+              "name": "異常検知"
+            },
+            {
+              "name": "OpenCVルールベース処理"
+            },
+            {
+              "name": "圧着不良自動判定"
+            }
+          ]
+        },
+        {
+          "name": "❽スーパー向け惣菜画像分類PoC",
+          "children": [
+            {
+              "name": "画像分類"
+            },
+            {
+              "name": "model推論＋DB連携"
+            },
+            {
+              "name": "Jetson Orin Nanoエッジ推論"
+            },
+            {
+              "name": "コサイン類似度比較"
+            }
+          ]
+        },
+        {
+          "name": "❿組立オペレーター支援システム",
+          "children": [
+            {
+              "name": "物体検知"
+            },
+            {
+              "name": "iPadによるパーツ撮影"
+            },
+            {
+              "name": "リアルタイム正誤判定"
+            }
+          ]
+        },
+        {
+          "name": "⓫開口部への養生蓋設置判定",
+          "children": [
+            {
+              "name": "物体検知"
+            },
+            {
+              "name": "YOLOv9"
+            },
+            {
+              "name": "コピー＆ペースト水増し"
+            }
+          ]
+        },
+        {
+          "name": "⓬馬の見守りプロダクト",
+          "children": [
+            {
+              "name": "物体検知"
+            },
+            {
+              "name": "ハードネガティブマイニング"
+            },
+            {
+              "name": "人物誤検知の削減"
+            }
+          ]
+        },
+        {
+          "name": "⓮流通トラックヤード工程判定",
+          "children": [
+            {
+              "name": "物体検知"
+            },
+            {
+              "name": "待機時間削減"
+            },
+            {
+              "name": "積載率判定"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "データ分析・生体情報",
+      "children": [
+        {
+          "name": "❸基板実装機のログ集計・加工",
+          "children": [
+            {
+              "name": "大規模CSV（GB級）集計"
+            },
+            {
+              "name": "予知保全・故障予測"
+            }
+          ]
+        },
+        {
+          "name": "❻創造性推定 - 生体情報解析",
+          "children": [
+            {
+              "name": "マルチモーダル解析(脳波・顔等)"
+            },
+            {
+              "name": "クラスタリングによる個人差吸収"
+            }
+          ]
+        },
+        {
+          "name": "❼ワークパフォーマンス位置推定",
+          "children": [
+            {
+              "name": "ICタグ(Quuppa)行動解析"
+            },
+            {
+              "name": "作業導線モニタリング"
+            }
+          ]
+        },
+        {
+          "name": "❺モデル堅牢性チェック基盤",
+          "children": [
+            {
+              "name": "敵対的攻撃(ART)検証"
+            },
+            {
+              "name": "SaaS型MLOps環境"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "生成AI・数理最適化・調査",
+      "children": [
+        {
+          "name": "❾営農支援ダッシュボード（RAG）",
+          "children": [
+            {
+              "name": "Azure OpenAI RAGシステム構築"
+            },
+            {
+              "name": "病虫害検知統合Webアプリ"
+            }
+          ]
+        },
+        {
+          "name": "⓭オンデマンドバス配車最適化",
+          "children": [
+            {
+              "name": "大規模近傍探索(ALNS)"
+            },
+            {
+              "name": "移動・待機コスト最小化"
+            }
+          ]
+        },
+        {
+          "name": "❹分散学習の高速化手法調査",
+          "children": [
+            {
+              "name": "海外論文39本調査"
+            },
+            {
+              "name": "Large Batch課題対策"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+};
+        const initializeMindmap = function initializeMindmap(containerSelector, data) {
+            const container = document.querySelector(containerSelector);
+            if (!container) return;
+            container.innerHTML = '';
+            const tooltip = d3.select(".tooltip");
+
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+            const colors = ['#c3caff', '#bad3ee', '#a2dcd0', '#9dfcbb', '#cdfda5'];
+
+            const svg = d3.select(container).append("svg")
+                .attr("width", width).attr("height", height)
+                .attr("viewBox", [-50, -height / 2, width, height]);
+
+            const g = svg.append("g");
+
+            const wrapText = (textSelection, maxWidth) => {
+                textSelection.each(function() {
+                    const text = d3.select(this);
+                    const words = text.text().split('').reverse();
+                    let word;
+                    let line = [];
+                    let lineNumber = 0;
+                    const lineHeight = 1.2;
+                    const x = text.attr("x") || 0;
+                    const dy = 0;
+                    text.text(null);
+                    let tspan = text.append("tspan").attr("x", x).attr("y", 0).attr("dy", dy + "em");
+                    while (word = words.pop()) {
+                        line.push(word);
+                        tspan.text(line.join(""));
+                        if (tspan.node().getComputedTextLength() > maxWidth && line.length > 1) {
+                            line.pop();
+                            tspan.text(line.join(""));
+                            line = [word];
+                            tspan = text.append("tspan").attr("x", x).attr("y", 0).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
+                        }
+                    }
+                    const nodeData = d3.select(this.parentNode).datum();
+                    nodeData.lineCount = lineNumber + 1;
+                    nodeData.nodeHeight = Math.max(40, nodeData.lineCount * 18 + 22);
+                });
+            };
+            
+            const tree = d3.tree().nodeSize([60, 520])
+                .separation((a, b) => {
+                    const aHeight = a.nodeHeight || 40;
+                    const bHeight = b.nodeHeight || 40;
+                    const spacing = (aHeight / 2 + bHeight / 2) / 40; 
+                    return a.parent == b.parent ? spacing : spacing * 1.1;
+                });
+                
+            let root = d3.hierarchy(data, d => d.children);
+            root.x0 = height / 2;
+            root.y0 = 0;
+            root.descendants().forEach(d => {
+                d._children = d.children;
+                if (d.depth > 0) d.children = null;
+            });
+            
+            const zoom = d3.zoom().scaleExtent([0.1, 3]).on("zoom", (event) => g.attr("transform", event.transform));
+            svg.call(zoom);
+
+            function update(source) {
+                const duration = 250;
+                const nodes = root.descendants().reverse();
+                const links = root.links();
+                tree(root);
+                const transition = svg.transition().duration(duration);
+                const node = g.selectAll("g.node").data(nodes, d => d.id || (d.id = crypto.randomUUID()));
+                const nodeEnter = node.enter().append("g")
+                    .attr("class", "node")
+                    .attr("transform", d => `translate(${source.y0},${source.x0})`)
+                    .attr("fill-opacity", 0).attr("stroke-opacity", 0)
+                    .on("click", (event, d) => { d.children = d.children ? null : d._children; update(d); });
+                
+                const text = nodeEnter.append("text")
+                    .attr("x", 15)
+                    .attr("text-anchor", "start")
+                    .attr("dominant-baseline", "middle")
+                    .text(d => d.data.name)
+                    .call(wrapText, 340);
+
+                nodeEnter.insert("rect", "text")
+                    .attr("rx", 8).attr("ry", 8)
+                    .attr("y", d => -d.nodeHeight / 2)
+                    .attr("height", d => d.nodeHeight)
+                    .style("fill", d => colors[d.depth % colors.length])
+                    .on("mouseover", function(event, d) {
+                        d3.select(this).style("fill", d3.color(colors[d.depth % colors.length]).darker(0.2));
+                        tooltip.transition().duration(200).style("opacity", .9);
+                        tooltip.html(d.data.name).style("left", (event.pageX + 15) + "px").style("top", (event.pageY - 28) + "px");
+                    }).on("mouseout", function(d) {
+                        d3.select(this).style("fill", d => colors[d.depth % colors.length]);
+                        tooltip.transition().duration(500).style("opacity", 0);
+                    });
+                
+                text.attr("transform", d => `translate(0, ${- (d.lineCount - 1) * 9 })`);
+
+                nodeEnter.append("text").attr("class", "expand-symbol").attr("dy", "0.31em");
+
+                const nodeUpdate = node.merge(nodeEnter);
+                
+                nodeUpdate.each(function(d) {
+                    const textElem = d3.select(this).select("text:not(.expand-symbol)");
+                    const bbox = textElem.node().getBBox();
+                    d.width = 15 + bbox.width + 15 + 20;
+                });
+                
+                nodeUpdate.select("rect")
+                    .attr("width", d => d.width)
+                    .transition(transition)
+                    .attr("height", d => d.nodeHeight)
+                    .attr("y", d => -d.nodeHeight / 2);
+
+                nodeUpdate.select(".expand-symbol").attr("x", d => d.width - 15).text(d => d._children ? "›" : (d.children ? "‹" : ""));
+
+                nodeUpdate.transition(transition).attr("transform", d => `translate(${d.y},${d.x})`).attr("fill-opacity", 1).attr("stroke-opacity", 1);
+                node.exit().transition(transition).remove().attr("transform", d => `translate(${source.y},${source.x})`).attr("fill-opacity", 0).attr("stroke-opacity", 0);
+
+                const link = g.selectAll("path.link").data(links, d => d.target.id);
+                const linkEnter = link.enter().insert("path", "g").attr("class", "link")
+                    .attr("d", d => {
+                        const o = {x: source.x0, y: source.y0 + (source.width || 0)};
+                        const midX = o.y + (o.y - o.y) / 2;
+                        return `M ${o.y},${o.x} C ${midX},${o.x} ${midX},${o.x} ${o.y},${o.x}`;
+                    });
+                link.merge(linkEnter).transition(transition)
+                    .attr("d", d => {
+                        const sourceNode = {x: d.source.x, y: d.source.y + d.source.width};
+                        const targetNode = {x: d.target.x, y: d.target.y};
+                        const midX = sourceNode.y + (targetNode.y - sourceNode.y) / 2;
+                        return `M ${sourceNode.y},${sourceNode.x} C ${midX},${sourceNode.x} ${midX},${targetNode.x} ${targetNode.y},${targetNode.x}`;
+                    });
+                link.exit().transition(transition).remove()
+                    .attr("d", d => {
+                        const o = {x: source.x, y: source.y + (source.width || 0)};
+                        const midX = o.y + (o.y - o.y) / 2;
+                         return `M ${o.y},${o.x} C ${midX},${o.x} ${midX},${o.x} ${o.y},${o.x}`;
+                    });
+                root.eachBefore(d => { d.x0 = d.x; d.y0 = d.y; });
+            }
+            
+            update(root);
+            return { root, update };
+        };
+        document.addEventListener('DOMContentLoaded', () => {
+             document.getElementById('main-title').innerHTML = mindmapData.name + "<br>井伊 喬稔";
+             const { root, update } = initializeMindmap('#mindmap-container', mindmapData);
+             function expandAll(d) { if (d._children) { d.children = d._children; d.children.forEach(expandAll); } }
+             d3.select("#expand-all").on("click", () => { expandAll(root); update(root); });
+
+            // ★ここを変更：collapse-all で「初期状態へ戻す（再初期化）」
+            d3.select("#collapse-all").on("click", () => {
+              mindmap = initializeMindmap('#mindmap-container', mindmapData);
+              root = mindmap.root;
+              update = mindmap.update;
+            });
+        });
+    </script>
+</body>
+</html>
